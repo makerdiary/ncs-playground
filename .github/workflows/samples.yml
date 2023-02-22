@@ -1,0 +1,126 @@
+name: Build
+
+on:
+  pull_request:
+  push:
+  release:
+    types:
+      - created
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: zephyrprojectrtos/ci:latest
+    env:
+      CMAKE_PREFIX_PATH: /opt/toolchains
+    strategy:
+      matrix:
+        board:
+          - connectkit_nrf52840
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get the version
+        id: get_version
+        working-directory: connect-micro-project
+        run: echo "VERSION=$(git describe --always --tags)" >> $GITHUB_OUTPUT
+
+      - name: Initialize
+        working-directory: connect-micro-project
+        run: |
+          west init -l .
+          west update
+
+      - name: Build samples
+        working-directory: connect-micro-project
+        run: |
+          mkdir -p ../firmware/${{ matrix.board }}/samples
+          west build -p always -b ${{ matrix.board }} samples/hello_world
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/hello_world-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/blinky
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/blinky-${{ matrix.board }}.uf2       
+          west build -p always -b ${{ matrix.board }} samples/button
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/button-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/voltage_measurement
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/voltage_measurement-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/qspi_flash
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/qspi_flash-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/usb/hid-mouse
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/usb_hid_mouse-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/usb/mass
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/usb_mass_ram-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/usb/mass -- -DCONFIG_APP_MSC_STORAGE_RAM=y
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/usb_mass_ram_fatfs-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/usb/mass -- -DCONFIG_APP_MSC_STORAGE_FLASH_FATFS=y
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/usb_mass_flash_fatfs-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/usb/mass -- -DCONFIG_APP_MSC_STORAGE_FLASH_LITTLEFS=y
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/usb_mass_flash_littlefs-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/nfc/record_launch_app
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/nfc_record_launch_app-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/nfc/record_text
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/nfc_record_text-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/nfc/record_uri
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/nfc_record_uri-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/nfc/writable_ndef_msg
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/nfc_writable_ndef_msg-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/ble/beacon
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/ble_beacon-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/ble/observer
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/ble_observer-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/ble/peripheral
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/ble_peripheral-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/ble/peripheral_lbs
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/ble_peripheral_lbs-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/ble/peripheral_hids_keyboard
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/ble_peripheral_hids_keyboard-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/ble/peripheral_hids_mouse
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/ble_peripheral_hids_mouse-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/ble/shell_bt_nus
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/ble_shell_bt_nus-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/openthread/cli
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/openthread_cli-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/openthread/cli -- -DOVERLAY_CONFIG=overlay-low_power.conf -DDTC_OVERLAY_FILE=low_power.overlay
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/openthread_cli_low_power-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/openthread/cli -- -DOVERLAY_CONFIG=overlay-multiprotocol.conf
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/openthread_cli_multiprotocol-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/openthread/coap_client -- -DOVERLAY_CONFIG=overlay-multiprotocol_ble.conf
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/openthread_coap_client_multiprotocol_ble-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/openthread/coap_server
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/openthread_coap_server-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/openthread/coprocessor
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/openthread_coprocessor-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/openthread/coprocessor -- -DOVERLAY_CONFIG=overlay-vendor_hook.conf
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/openthread_coprocessor_vendor_hook-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/zigbee/network_coordinator
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/zigbee_network_coordinator-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/zigbee/network_coordinator
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/zigbee_network_coordinator-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/zigbee/light_bulb
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/zigbee_light_bulb-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/zigbee/light_switch
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/zigbee_light_switch-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/zigbee/ncp
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/zigbee_ncp-${{ matrix.board }}.uf2
+          west build -p always -b ${{ matrix.board }} samples/zigbee/shell
+          cp build/zephyr/zephyr.uf2 ../firmware/${{ matrix.board }}/samples/zigbee_shell-${{ matrix.board }}.uf2
+
+      - name: Tar firmware
+        working-directory: firmware
+        run: tar -cvf samples-${{ matrix.board }}-${{ steps.get_version.outputs.VERSION }}.tar ./${{ matrix.board }}/samples/*.uf2
+
+      - name: Archive firmware
+        uses: actions/upload-artifact@v3
+        with:
+          name: samples-${{ matrix.board }}-${{ steps.get_version.outputs.VERSION }}
+          path: |
+            firmware/${{ matrix.board }}/samples/*.uf2
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        if: ${{ github.event_name == 'release' }}
+        with:
+          files: |
+            firmware/samples-${{ matrix.board }}-${{ steps.get_version.outputs.VERSION }}.tar

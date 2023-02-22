@@ -1,0 +1,21 @@
+# Copyright (c) 2016-2023 Makerdiary
+# SPDX-License-Identifier: Apache-2.0
+
+manifest:
+  self:
+    path: connect-micro-project
+
+  remotes:
+    - name: makerdiary
+      url-base: https://github.com/makerdiary
+    - name: zephyrproject-rtos
+      url-base: https://github.com/zephyrproject-rtos
+    - name: nrfconnect
+      url-base: https://github.com/nrfconnect
+
+  projects:
+    - name: sdk-nrf
+      path: nrf
+      remote: nrfconnect
+      revision: main
+      import: true
