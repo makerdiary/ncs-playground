@@ -1,7 +1,7 @@
 # Connect Micro Project
 
 [![Current Version](https://img.shields.io/github/tag/makerdiary/connect-micro-project.svg)](https://github.com/makerdiary/connect-micro-project/tags)
-[![Documentation](https://github.com/makerdiary/connect-micro-project/actions/workflows/samples.yml/badge.svg?branch=main)](https://github.com/makerdiary/connect-micro-project/actions/workflows/samples.yml?query=branch%3Amain)
+[![Samples](https://github.com/makerdiary/connect-micro-project/actions/workflows/samples.yml/badge.svg?branch=main)](https://github.com/makerdiary/connect-micro-project/actions/workflows/samples.yml?query=branch%3Amain)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?color=informational)](/.github/CONTRIBUTING.md)
 
 Connect Micro Project provides support for developing on all Makerdiary development hardware.
