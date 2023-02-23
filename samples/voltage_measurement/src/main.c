@@ -15,11 +15,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/sys/util.h>
-#include <zephyr/usb/usb_device.h>
-#include <zephyr/drivers/uart.h>
-
-BUILD_ASSERT(DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_console), zephyr_cdc_acm_uart),
-         "Console device is not ACM CDC UART device");
 
 #define VSYS_NODE   DT_PATH(power_vsys_in)
 
@@ -54,24 +49,6 @@ void main(void)
         /* buffer size in bytes, not number of samples */
         .buffer_size = sizeof(buf),
     };
-
-    const struct device *const dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
-    uint32_t dtr = 0;
-
-    if (usb_enable(NULL)) {
-        return;
-    }
-
-    /* Poll if the DTR flag was set */
-    while (!dtr) {
-        uart_line_ctrl_get(dev, UART_LINE_CTRL_DTR, &dtr);
-        /* Give CPU resources to low priority threads. */
-        k_sleep(K_MSEC(100));
-    }
-
-    if (!device_is_ready(power_gpio.port)) {
-        return;
-    }
 
     err = gpio_pin_configure_dt(&power_gpio, GPIO_OUTPUT_ACTIVE);
     if (err < 0) {
