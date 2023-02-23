@@ -11,31 +11,20 @@
 #include <zephyr/devicetree.h>
 #include <stdio.h>
 #include <string.h>
+
+#if DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_console), zephyr_cdc_acm_uart)
 #include <zephyr/usb/usb_device.h>
 #include <zephyr/drivers/uart.h>
-
-BUILD_ASSERT(DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_console), zephyr_cdc_acm_uart),
-         "Console device is not ACM CDC UART device");
+#endif
 
 #define QSPI_FLASH_TEST_REGION_OFFSET 0xff000
 #define QSPI_FLASH_SECTOR_SIZE        4096
 
 void main(void)
 {
-    const uint8_t expected[] = { 0x55, 0xaa, 0x66, 0x99 };
-    const size_t len = sizeof(expected);
-    uint8_t buf[sizeof(expected)];
-    const struct device *flash_dev;
-    int rc;
-
-    flash_dev = DEVICE_DT_GET(DT_ALIAS(spi_flash0));
-
+#if DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_console), zephyr_cdc_acm_uart)
     const struct device *const dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
     uint32_t dtr = 0;
-
-    if (usb_enable(NULL)) {
-        return;
-    }
 
     /* Poll if the DTR flag was set */
     while (!dtr) {
@@ -43,6 +32,15 @@ void main(void)
         /* Give CPU resources to low priority threads. */
         k_sleep(K_MSEC(100));
     }
+#endif
+
+    const uint8_t expected[] = { 0x55, 0xaa, 0x66, 0x99 };
+    const size_t len = sizeof(expected);
+    uint8_t buf[sizeof(expected)];
+    const struct device *flash_dev;
+    int rc;
+
+    flash_dev = DEVICE_DT_GET(DT_ALIAS(spi_flash0));
 
     if (!device_is_ready(flash_dev)) {
         printf("%s: device not ready.\n", flash_dev->name);
