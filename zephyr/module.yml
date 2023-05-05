@@ -3,7 +3,7 @@
 
 build:
   # Path to the Kconfig file that will be sourced into Zephyr Kconfig tree under
-  # Zephyr > Modules > connect-micro. Path is relative from root of this
+  # Zephyr > Modules > ncs-playground. Path is relative from root of this
   # repository.
   kconfig: Kconfig
   # Path to the folder that contains the CMakeLists.txt file to be included by

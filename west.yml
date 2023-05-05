@@ -3,7 +3,7 @@
 
 manifest:
   self:
-    path: connect-micro-project
+    path: ncs-playground
 
   remotes:
     - name: makerdiary

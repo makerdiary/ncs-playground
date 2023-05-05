@@ -4,17 +4,17 @@ We're really glad you're reading this, because we would love to have more develo
 
 ## Before contributing
 
-If you encounter a bug or think of a useful feature, please [create a new issue](https://github.com/makerdiary/connect-micro-project/issues/new). Creating an issue before jumping into code ensures we can discuss it and determine whether it aligns with the direction of this project.
+If you encounter a bug or think of a useful feature, please [create a new issue](https://github.com/makerdiary/ncs-playground/issues/new). Creating an issue before jumping into code ensures we can discuss it and determine whether it aligns with the direction of this project.
 
 If you want to contribute to the project, regardless of whether it's a small bug fix or correcting a typo, please feel free to do so. Any help goes a long way! Also, contributions aren't necessarily all code related. Other contributions can be in the form of issues, pull requests, discussions, etc.
 
 ## Got a question or problem?
 
-For quick questions there's no need to open an issue as you can reach us on [GitHub Discussions](https://github.com/makerdiary/connect-micro-project/discussions).
+For quick questions there's no need to open an issue as you can reach us on [GitHub Discussions](https://github.com/makerdiary/ncs-playground/discussions).
 
 ## Reporting a bug
 
-Bugs are tracked as [GitHub issues](https://github.com/makerdiary/connect-micro-project/issues). Search open issues to see if someone else has reported a similar bug. If it's something new, [open an issue](https://github.com/makerdiary/connect-micro-project/issues/new). We'll use the issue to have a conversation about the problem you want to fix.
+Bugs are tracked as [GitHub issues](https://github.com/makerdiary/ncs-playground/issues). Search open issues to see if someone else has reported a similar bug. If it's something new, [open an issue](https://github.com/makerdiary/ncs-playground/issues/new). We'll use the issue to have a conversation about the problem you want to fix.
 
 When creating a new issue, please ensure the issue is clear and include additional details to help maintainers reproduce it:
 

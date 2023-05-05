@@ -21,21 +21,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          path: connect-micro-project
+          path: ncs-playground
 
       - name: Get the version
         id: get_version
-        working-directory: connect-micro-project
+        working-directory: ncs-playground
         run: echo "VERSION=$(git describe --always --tags)" >> $GITHUB_OUTPUT
 
       - name: Initialize
-        working-directory: connect-micro-project
+        working-directory: ncs-playground
         run: |
           west init -l .
           west update
 
       - name: Build samples
-        working-directory: connect-micro-project
+        working-directory: ncs-playground
         run: |
           mkdir -p ../firmware/${{ matrix.board }}/samples
           west build -p always -b ${{ matrix.board }} samples/hello_world

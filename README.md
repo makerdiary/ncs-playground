@@ -1,10 +1,10 @@
-# Connect Micro Project
+# nRF Connect SDK Playground
 
-[![Current Version](https://img.shields.io/github/tag/makerdiary/connect-micro-project.svg)](https://github.com/makerdiary/connect-micro-project/tags)
-[![Samples](https://github.com/makerdiary/connect-micro-project/actions/workflows/samples.yml/badge.svg?branch=main)](https://github.com/makerdiary/connect-micro-project/actions/workflows/samples.yml?query=branch%3Amain)
+[![Current Version](https://img.shields.io/github/tag/makerdiary/ncs-playground.svg)](https://github.com/makerdiary/ncs-playground/tags)
+[![Samples](https://github.com/makerdiary/ncs-playground/actions/workflows/samples.yml/badge.svg?branch=main)](https://github.com/makerdiary/ncs-playground/actions/workflows/samples.yml?query=branch%3Amain)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?color=informational)](/.github/CONTRIBUTING.md)
 
-Connect Micro Project provides support for developing on all Makerdiary development hardware.
+nRF Connect SDK Playground contains a range of applications, samples, and libraries for Makerdiary's development hardware.
 
 ## Supported Hardware
 
@@ -22,6 +22,6 @@ We would love to have more developers contribute to this project! If you're pass
 Copyright (c) 2016-2023 Makerdiary. See [LICENSE](./LICENSE) for further details.
 
 [nrf52840_connectkit]: https://wiki.makerdiary.com/nrf52840-connectkit
-[discussions]: https://github.com/makerdiary/connect-micro-project/discussions
+[discussions]: https://github.com/makerdiary/ncs-playground/discussions
 [community]: https://community.makerdiary.com
 [contributing]: /.github/CONTRIBUTING.md
