@@ -6,6 +6,8 @@
 
 nRF Connect SDK Playground contains a range of applications, samples, and libraries for Makerdiary's development hardware.
 
+This repository is versioned together with the [nRF Connect SDK main tree]. This means that every time that nRF Connect SDK is tagged, this repository is tagged as well with the same version number, and the manifest entry for zephyr will point to the corresponding nRF Connect SDK tag. For example, the ncs-playground v2.4.0 will point to nRF Connect SDK v2.4.0. Note that the `main` branch always points to the development branch of nRF Connect SDK, also `main`.
+
 ## Supported Hardware
 
 | Hardware platform      | Build target          |
@@ -51,6 +53,8 @@ We would love to have more developers contribute to this project! If you're pass
 
 Copyright (c) 2016-2023 Makerdiary. See [LICENSE](./LICENSE) for further details.
 
+
+[nRF Connect SDK main tree]: https://github.com/nrfconnect/sdk-nrf
 [nRF52840 Connect Kit]: https://wiki.makerdiary.com/nrf52840-connectkit
 [Blinky]: /samples/blinky
 [Getting started guide]: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/getting_started.html
