@@ -10,7 +10,7 @@
 
 int observer_start(void);
 
-void main(void)
+int main(void)
 {
     int err;
 
@@ -20,10 +20,12 @@ void main(void)
     err = bt_enable(NULL);
     if (err) {
         printk("Bluetooth init failed (err %d)\n", err);
-        return;
+        return 0;
     }
 
     (void)observer_start();
 
     printk("Exiting %s thread.\n", __func__);
+
+    return 0;
 }

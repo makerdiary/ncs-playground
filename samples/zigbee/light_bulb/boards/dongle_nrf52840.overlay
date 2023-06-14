@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2016-2023 Makerdiary
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/ {
+    chosen {
+        ncs,zigbee-timer = &timer2;
+    };
+};
+
+&timer2 {
+    status = "okay";
+};

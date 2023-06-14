@@ -1,0 +1,16 @@
+sample:
+  name: OpenThread CLI sample
+  description: Test OpenThread Command Line Interface.
+common:
+  build_only: true
+  integration_platforms:
+    - connectkit_nrf52840
+    - dongle_nrf52840
+tests:
+  sample.openthread.cli: {}
+  sample.openthread.cli.low_power:
+    extra_args: OVERLAY_CONFIG=overlay-low_power.conf
+                DTC_OVERLAY_FILE=low_power.overlay
+  sample.openthread.cli.multiprotocol:
+    extra_args: OVERLAY_CONFIG=overlay-multiprotocol.conf
+

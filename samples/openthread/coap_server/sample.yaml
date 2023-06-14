@@ -1,0 +1,10 @@
+sample:
+  description: Test CoAP communication in Thread network
+  name: OpenThread CoAP Server
+common:
+  build_only: true
+  integration_platforms:
+    - connectkit_nrf52840
+    - dongle_nrf52840
+tests:
+  sample.openthread.coap_server: {}

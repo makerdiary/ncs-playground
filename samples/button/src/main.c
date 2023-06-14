@@ -39,21 +39,21 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
     printk("Button pressed at %" PRIu32 "\n", k_cycle_get_32());
 }
 
-void main(void)
+int main(void)
 {
     int ret;
 
     if (!device_is_ready(button.port)) {
         printk("Error: button device %s is not ready\n",
                button.port->name);
-        return;
+        return 0;
     }
 
     ret = gpio_pin_configure_dt(&button, GPIO_INPUT);
     if (ret != 0) {
         printk("Error %d: failed to configure %s pin %d\n",
                ret, button.port->name, button.pin);
-        return;
+        return 0;
     }
 
     ret = gpio_pin_interrupt_configure_dt(&button,
@@ -61,7 +61,7 @@ void main(void)
     if (ret != 0) {
         printk("Error %d: failed to configure interrupt on %s pin %d\n",
             ret, button.port->name, button.pin);
-        return;
+        return 0;
     }
 
     gpio_init_callback(&button_cb_data, button_pressed, BIT(button.pin));
@@ -96,4 +96,5 @@ void main(void)
             k_msleep(SLEEP_TIME_MS);
         }
     }
+    return 0;
 }

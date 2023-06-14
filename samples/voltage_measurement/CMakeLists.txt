@@ -1,4 +1,8 @@
+#
+# Copyright (c) 2016-2023 Makerdiary
+#
 # SPDX-License-Identifier: Apache-2.0
+#
 
 cmake_minimum_required(VERSION 3.20.0)
 

@@ -1,0 +1,10 @@
+sample:
+  description: BT NUS shell sample
+  name: BT NUS shell
+common:
+  build_only: true
+  integration_platforms:
+    - connectkit_nrf52840
+    - dongle_nrf52840
+tests:
+  sample.bluetooth.shell_bt_nus: {}

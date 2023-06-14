@@ -1,0 +1,26 @@
+/*
+ * Copyright (c) 2016-2023 Makerdiary
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/ {
+    chosen {
+        zephyr,console = &cdc_acm_uart0;
+    };
+
+    /* An external voltage divider is needed. */
+    power_vsys_in {
+        compatible = "voltage-divider";
+        io-channels = <&adc 0>;
+        output-ohms = <100000>;
+        full-ohms = <(1000000 + 100000)>;
+        power-gpios = <&gpio0 5 0>;
+    };
+};
+
+&zephyr_udc0 {
+    cdc_acm_uart0: cdc_acm_uart0 {
+        compatible = "zephyr,cdc-acm-uart";
+    };
+};

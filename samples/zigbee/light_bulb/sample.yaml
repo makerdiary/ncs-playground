@@ -1,0 +1,10 @@
+sample:
+  description: Zigbee Light control - light bulb sample
+  name: Zigbee Light control
+common:
+  build_only: true
+  integration_platforms:
+    - connectkit_nrf52840
+    - dongle_nrf52840
+tests:
+  sample.zigbee.light_bulb: {}

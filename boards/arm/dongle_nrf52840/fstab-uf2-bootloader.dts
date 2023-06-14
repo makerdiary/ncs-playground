@@ -1,0 +1,36 @@
+/*
+ * Copyright (c) 2016-2023 Makerdiary
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* Flash partition table compatible with UF2 bootloader */
+
+&flash0 {
+    partitions {
+        compatible = "fixed-partitions";
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        /* Application placed after Nordic MBR.
+         */
+        boot_partition: partition@0 {
+            label = "mbr";
+            reg = <0x000000000 0x00001000>;
+        };
+        slot0_partition: partition@1000 {
+            label = "image-0";
+            reg = <0x00001000 0x0000d3000>;
+        };
+        /* Storage partition will be used by FCB/NFFS/NVS if enabled. */
+        storage_partition: partition@d4000 {
+            label = "storage";
+            reg = <0x000d4000 0x00020000>;
+        };
+
+        /* UF2 bootloader <0xf4000 0xa000>
+         * MBR params page <0xfe000 0x1000>
+         * Bootloader settings page <0xff000 0x1000>
+         */
+    };
+};

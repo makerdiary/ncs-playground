@@ -1,0 +1,8 @@
+sample:
+  name: NFC Records text
+common:
+  build_only: true
+  integration_platforms:
+    - connectkit_nrf52840
+tests:
+  sample.nfc.record_text: {}

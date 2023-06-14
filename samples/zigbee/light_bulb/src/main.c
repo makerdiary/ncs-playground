@@ -28,7 +28,7 @@
 #include <zb_nrf_platform.h>
 #include "zb_dimmable_light.h"
 
-#define RUN_STATUS_LED                  2 /* RGB LED - Green */
+#define RUN_STATUS_LED                  2
 #define RUN_LED_BLINK_INTERVAL          1000
 
 /* Device endpoint, used to receive light controlling commands. */
@@ -70,23 +70,25 @@
 #define BULB_INIT_BASIC_PH_ENV          ZB_ZCL_BASIC_ENV_UNSPECIFIED
 
 /* LED indicating that light switch successfully joind Zigbee network. */
-#define ZIGBEE_NETWORK_STATE_LED        3 /* RGB LED - Blue */
+#ifdef CONFIG_BOARD_DONGLE_NRF52840
+#define ZIGBEE_NETWORK_STATE_LED        1
+#else
+#define ZIGBEE_NETWORK_STATE_LED        3
+#endif /* defined CONFIG_BOARD_DONGLE_NRF52840 */
 
 /* LED immitaing dimmable light bulb - define for informational
  * purposes only.
  */
-#define BULB_LED                        0 /* Green LED */
+#define BULB_LED                        0
 
 /* Button used to enter the Bulb into the Identify mode. */
 #define IDENTIFY_MODE_BUTTON            DK_BTN1_MSK
 
-/* Use onboard led4 to act as a light bulb.
- * The app.overlay file has this at node label "pwm_led3" in /pwmleds.
- */
-#define PWM_LED_GREEN_NODE              DT_NODELABEL(pwm_led0_green)
+/* Use onboard led0 to act as a light bulb. */
+#define PWM_LED_NODE                    DT_ALIAS(pwm_led0)
 
-#if DT_NODE_HAS_STATUS(PWM_LED_GREEN_NODE, okay)
-static const struct pwm_dt_spec led_pwm = PWM_DT_SPEC_GET(PWM_LED_GREEN_NODE);
+#if DT_NODE_HAS_STATUS(PWM_LED_NODE, okay)
+static const struct pwm_dt_spec led_pwm = PWM_DT_SPEC_GET(PWM_LED_NODE);
 #else
 #error "Choose supported PWM driver"
 #endif
@@ -520,7 +522,7 @@ void zboss_signal_handler(zb_bufid_t bufid)
     }
 }
 
-void main(void)
+int main(void)
 {
     int blink_status = 0;
     int err;

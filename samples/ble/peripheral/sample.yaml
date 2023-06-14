@@ -1,0 +1,10 @@
+sample:
+  name: Bluetooth Peripheral
+  description: Demonstrates the BLE Peripheral role
+common:
+  build_only: true
+  integration_platforms:
+    - connectkit_nrf52840
+    - dongle_nrf52840
+tests:
+  sample.bluetooth.peripheral: {}

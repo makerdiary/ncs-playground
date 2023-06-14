@@ -9,10 +9,8 @@
 
 #if defined(CONFIG_SOC_NRF52840_QIAA)
 
-static int nfcpins_enable(const struct device *dev)
+static int nfcpins_enable(void)
 {
-    ARG_UNUSED(dev);
-
     /* if NFCPINS in UICR is disabled, NFC functionality will be disabled.
      * To enable NFC, NFCPINS in UICR should be erased.
      * This function will erase NFCPINS and keep other registers in UICR unchanged.

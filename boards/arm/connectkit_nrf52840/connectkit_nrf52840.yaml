@@ -1,4 +1,4 @@
-identifier: conneckit_nrf52840
+identifier: connectkit_nrf52840
 name: NRF52840-CONNECT-KIT
 type: mcu
 arch: arm

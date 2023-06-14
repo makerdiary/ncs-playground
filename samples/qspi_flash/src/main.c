@@ -20,7 +20,7 @@
 #define QSPI_FLASH_TEST_REGION_OFFSET 0xff000
 #define QSPI_FLASH_SECTOR_SIZE        4096
 
-void main(void)
+int main(void)
 {
 #if DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_console), zephyr_cdc_acm_uart)
     const struct device *const dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
@@ -44,7 +44,7 @@ void main(void)
 
     if (!device_is_ready(flash_dev)) {
         printf("%s: device not ready.\n", flash_dev->name);
-        return;
+        return 0;
     }
 
     printf("\n%s QSPI flash testing\n", flash_dev->name);
@@ -75,14 +75,14 @@ void main(void)
     rc = flash_write(flash_dev, QSPI_FLASH_TEST_REGION_OFFSET, expected, len);
     if (rc != 0) {
         printf("Flash write failed! %d\n", rc);
-        return;
+        return 0;
     }
 
     memset(buf, 0, len);
     rc = flash_read(flash_dev, QSPI_FLASH_TEST_REGION_OFFSET, buf, len);
     if (rc != 0) {
         printf("Flash read failed! %d\n", rc);
-        return;
+        return 0;
     }
 
     if (memcmp(expected, buf, len) == 0) {
@@ -101,4 +101,5 @@ void main(void)
             ++wp;
         }
     }
+    return 0;
 }

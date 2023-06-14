@@ -1,0 +1,11 @@
+sample:
+  name: Bluetooth Observer
+common:
+  build_only: true
+  integration_platforms:
+    - connectkit_nrf52840
+    - dongle_nrf52840
+tests:
+  sample.bluetooth.observer: {}
+  sample.bluetooth.observer.extended:
+    extra_args: OVERLAY_CONFIG=overlay-extended.conf

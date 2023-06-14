@@ -1,0 +1,10 @@
+sample:
+  description: Zigbee application that includes all Zigbee shell commands
+  name: Zigbee application with Zigbee shell
+common:
+  build_only: true
+  integration_platforms:
+    - connectkit_nrf52840
+    - dongle_nrf52840
+tests:
+  sample.zigbee.shell: {}

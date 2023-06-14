@@ -11,8 +11,6 @@
 #include <ram_pwrdn.h>
 #include <zephyr/device.h>
 #include <zephyr/pm/device.h>
-#include <zephyr/drivers/uart.h>
-#include <zephyr/usb/usb_device.h>
 
 #include "coap_client_utils.h"
 
@@ -112,44 +110,9 @@ static void on_button_changed(uint32_t button_state, uint32_t has_changed)
 
 }
 
-void main(void)
+int main(void)
 {
     int ret;
-
-#if DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_shell_uart), zephyr_cdc_acm_uart)
-    const struct device *dev;
-    uint32_t dtr = 0U;
-
-    ret = usb_enable(NULL);
-    if (ret != 0) {
-        LOG_ERR("Failed to enable USB");
-        return;
-    }
-
-    dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_shell_uart));
-    if (dev == NULL) {
-        LOG_ERR("Failed to find specific UART device");
-        return;
-    }
-
-    LOG_INF("Waiting for host to be ready to communicate");
-
-    /* Data Terminal Ready - check if host is ready to communicate */
-    while (!dtr) {
-        ret = uart_line_ctrl_get(dev, UART_LINE_CTRL_DTR, &dtr);
-        if (ret) {
-            LOG_ERR("Failed to get Data Terminal Ready line state: %d",
-                ret);
-            continue;
-        }
-        k_msleep(100);
-    }
-
-    /* Data Carrier Detect Modem - mark connection as established */
-    (void)uart_line_ctrl_set(dev, UART_LINE_CTRL_DCD, 1);
-    /* Data Set Ready - the NCP SoC is ready to communicate */
-    (void)uart_line_ctrl_set(dev, UART_LINE_CTRL_DSR, 1);
-#endif
 
     LOG_INF("Start CoAP-client sample");
 
@@ -160,13 +123,13 @@ void main(void)
     ret = dk_buttons_init(on_button_changed);
     if (ret) {
         LOG_ERR("Cannot init buttons (error: %d)", ret);
-        return;
+        return 0;
     }
 
     ret = dk_leds_init();
     if (ret) {
         LOG_ERR("Cannot init leds, (error: %d)", ret);
-        return;
+        return 0;
     }
 
 #if CONFIG_BT_NUS
@@ -178,10 +141,12 @@ void main(void)
     ret = ble_utils_init(&nus_clbs, on_ble_connect, on_ble_disconnect);
     if (ret) {
         LOG_ERR("Cannot init BLE utilities");
-        return;
+        return 0;
     }
 
 #endif /* CONFIG_BT_NUS */
 
     coap_client_utils_init(on_ot_connect, on_ot_disconnect, on_mtd_mode_toggle);
+
+    return 0;
 }

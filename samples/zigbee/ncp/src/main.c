@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2021 Nordic Semiconductor ASA
+ * Copyright (c) 2016-2023 Makerdiary
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -26,7 +27,7 @@
 
 LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 
-#define VENDOR_SPECIFIC_LED 1    /* RGB LED - Red */
+#define VENDOR_SPECIFIC_LED 1
 
 #define VENDOR_SPECIFIC_LED_ACTION_OFF (0U)
 #define VENDOR_SPECIFIC_LED_ACTION_ON (1U)

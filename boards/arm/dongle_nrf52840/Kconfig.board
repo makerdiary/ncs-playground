@@ -1,0 +1,9 @@
+#
+# Copyright (c) 2016-2023 Makerdiary
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config BOARD_DONGLE_NRF52840
+    bool "NRF52840 MDK USB DONGLE"
+    depends on SOC_NRF52840_QIAA

@@ -1,0 +1,32 @@
+sample:
+  name: USB Mass Storage sample
+common:
+  build_only: true
+  integration_platforms:
+    - connectkit_nrf52840
+    - dongle_nrf52840
+tests:
+  sample.usb.mass_none: {}
+  sample.usb_device_next.mass_ram_none:
+    extra_args: CONF_FILE="usbd_next_prj.conf"
+  sample.usb.mass_ram_fat:
+    extra_configs:
+      - CONFIG_APP_MSC_STORAGE_RAM=y
+  sample.usb_device_next.mass_ram_fat:
+    extra_args: CONF_FILE="usbd_next_prj.conf"
+    extra_configs:
+      - CONFIG_APP_MSC_STORAGE_RAM=y
+  sample.usb.mass_flash_fatfs:
+    extra_configs:
+      - CONFIG_APP_MSC_STORAGE_FLASH_FATFS=y
+  sample.usb_device_next.mass_flash_fatfs:
+    extra_args: CONF_FILE="usbd_next_prj.conf"
+    extra_configs:
+      - CONFIG_APP_MSC_STORAGE_FLASH_FATFS=y
+  sample.usb.mass_flash_littlefs:
+    extra_configs:
+      - CONFIG_APP_MSC_STORAGE_FLASH_LITTLEFS=y
+  sample.usb_device_next.mass_flash_littlefs:
+    extra_args: CONF_FILE="usbd_next_prj.conf"
+    extra_configs:
+      - CONFIG_APP_MSC_STORAGE_FLASH_LITTLEFS=y

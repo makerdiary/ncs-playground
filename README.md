@@ -10,9 +10,10 @@ This repository is versioned together with the [nRF Connect SDK main tree]. This
 
 ## Supported Hardware
 
-| Hardware platform      | Build target          |
-|------------------------|-----------------------|
-| [nRF52840 Connect Kit] | `connectkit_nrf52840` |
+| Hardware platform         | Build target          |
+|---------------------------|-----------------------|
+| [nRF52840 Connect Kit]    | `connectkit_nrf52840` |
+| [nRF52840 MDK USB Dongle] | `dongle_nrf52840`     |
 
 
 ## Getting Started
@@ -56,6 +57,7 @@ Copyright (c) 2016-2023 Makerdiary. See [LICENSE](./LICENSE) for further details
 
 [nRF Connect SDK main tree]: https://github.com/nrfconnect/sdk-nrf
 [nRF52840 Connect Kit]: https://wiki.makerdiary.com/nrf52840-connectkit
+[nRF52840 MDK USB Dongle]: https://wiki.makerdiary.com/nrf52840-mdk-usb-dongle
 [Blinky]: /samples/blinky
 [Getting started guide]: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/getting_started.html
 [discussions]: https://github.com/makerdiary/ncs-playground/discussions

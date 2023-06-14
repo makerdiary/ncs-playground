@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2016-2023 Makerdiary
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+if BOARD_DONGLE_NRF52840
+
+config BOARD
+    default "dongle_nrf52840"
+
+config BT_CTLR
+    default BT
+
+endif # BOARD_DONGLE_NRF52840

@@ -1,0 +1,9 @@
+sample:
+  name: ADC driver sample
+common:
+  build_only: true
+  integration_platforms:
+    - connectkit_nrf52840
+    - dongle_nrf52840
+tests:
+  sample.adc: {}

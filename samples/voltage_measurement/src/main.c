@@ -40,7 +40,7 @@ static const struct adc_dt_spec adc_channels[] = {
 
 static const struct gpio_dt_spec power_gpio = GPIO_DT_SPEC_GET(VSYS_NODE, power_gpios);
 
-void main(void)
+int main(void)
 {
     int err;
     int16_t buf;
@@ -52,12 +52,12 @@ void main(void)
 
     err = gpio_pin_configure_dt(&power_gpio, GPIO_OUTPUT_ACTIVE);
     if (err < 0) {
-        return;
+        return 0;
     }
 
     err = gpio_pin_set_dt(&power_gpio, 1);
     if (err < 0) {
-        return;
+        return 0;
     }    
 
 
@@ -65,13 +65,13 @@ void main(void)
     for (size_t i = 0U; i < ARRAY_SIZE(adc_channels); i++) {
         if (!device_is_ready(adc_channels[i].dev)) {
             printk("ADC controller device not ready\n");
-            return;
+            return 0;
         }
 
         err = adc_channel_setup_dt(&adc_channels[i]);
         if (err < 0) {
             printk("Could not setup channel #%d (%d)\n", i, err);
-            return;
+            return 0;
         }
     }
 
@@ -108,4 +108,5 @@ void main(void)
 
         k_sleep(K_MSEC(1000));
     }
+    return 0;
 }

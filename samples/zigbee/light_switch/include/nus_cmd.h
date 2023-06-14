@@ -29,28 +29,28 @@ typedef void (*nus_disconnection_cb_t)(struct k_work *item);
 /** @brief NUS command entry.
  */
 struct nus_entry {
-     const char *cmd;        /**< Command string. */
-     struct k_work work;     /**< Command work item. */
+    const char *cmd;        /**< Command string. */
+    struct k_work work;     /**< Command work item. */
 };
 
 /**@brief Macro to initialise (bind) command string to work handler.
  */
-#define NUS_COMMAND(_cmd, _handler)                \
-     {                               \
-          .work = Z_WORK_INITIALIZER(_handler), \
-          .cmd = _cmd,                     \
-     }                               \
+#define NUS_COMMAND(_cmd, _handler)              \
+    {                          \
+        .work = Z_WORK_INITIALIZER(_handler), \
+        .cmd = _cmd,                  \
+    }                          \
 
 /**@brief Function to initialise NUS Command service.
  *
  * @param[in] on_connect Callback that will be called when central connects to
- *                the NUS service.
+ *             the NUS service.
  * @param[in] on_disconnect Callback that will be called when BLE central
- *                   disconnects from the NUS service.
+ *                disconnects from the NUS service.
  * @param[in] command_set   A pointer to an array with NUS commands.
  */
 void nus_cmd_init(nus_connection_cb_t on_connect,
-            nus_disconnection_cb_t on_disconnect,
-            struct nus_entry *command_set);
+          nus_disconnection_cb_t on_disconnect,
+          struct nus_entry *command_set);
 
 #endif

@@ -13,5 +13,8 @@ build
 build-*
 build_*
 
+# twister
+twister-out*
+
 # mkdocs
 site

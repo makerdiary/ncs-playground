@@ -1,0 +1,14 @@
+/*
+ * Copyright (c) 2016-2023 Makerdiary
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/ {
+    msc_disk0 {
+        compatible = "zephyr,flash-disk";
+        partition = <&storage_partition>;
+        disk-name = "NAND";
+        cache-size = <4096>;
+    };
+};

@@ -1,0 +1,10 @@
+sample:
+  description: Bluetooth Low Energy LED Button service sample
+  name: BLE LED Button service
+common:
+  build_only: true
+  integration_platforms:
+    - connectkit_nrf52840
+    - dongle_nrf52840
+tests:
+  sample.bluetooth.peripheral_lbs: {}

@@ -347,7 +347,7 @@ static void hrs_notify(void)
     bt_hrs_notify(heartrate);
 }
 
-void main(void)
+int main(void)
 {
     struct bt_gatt_attr *vnd_ind_attr;
     char str[BT_UUID_STR_LEN];
@@ -356,7 +356,7 @@ void main(void)
     err = bt_enable(NULL);
     if (err) {
         printk("Bluetooth init failed (err %d)\n", err);
-        return;
+        return 0;
     }
 
     bt_ready();
@@ -401,4 +401,5 @@ void main(void)
             }
         }
     }
+    return 0;
 }

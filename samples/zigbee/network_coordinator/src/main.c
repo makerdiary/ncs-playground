@@ -22,7 +22,7 @@
 #include "zb_range_extender.h"
 
 
-#define RUN_STATUS_LED                         2  /* RGB LED - Green */
+#define RUN_STATUS_LED                         2
 #define RUN_LED_BLINK_INTERVAL                 1000
 
 /* Device endpoint, used to receive ZCL commands. */
@@ -34,10 +34,14 @@
 #define COORDINATOR_INIT_BASIC_POWER_SOURCE    ZB_ZCL_BASIC_POWER_SOURCE_DC_SOURCE
 
 /* LED indicating that device successfully joined Zigbee network. */
-#define ZIGBEE_NETWORK_STATE_LED               3  /* RGB LED - Blue */
+#ifdef CONFIG_BOARD_DONGLE_NRF52840
+#define ZIGBEE_NETWORK_STATE_LED               0
+#else
+#define ZIGBEE_NETWORK_STATE_LED               3
+#endif /* defined CONFIG_BOARD_DONGLE_NRF52840 */
 
 /* LED used for device identification. */
-#define IDENTIFY_LED                           1 /* RGB LED - Red */
+#define IDENTIFY_LED                           1
 
 /* Button which reopens the Zigbee Network. */
 #define KEY_ZIGBEE_NETWORK_REOPEN              DK_BTN2_MSK
@@ -63,46 +67,46 @@ LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
  * Stores all settings and static values.
  */
 struct zb_device_ctx {
-     zb_zcl_basic_attrs_t basic_attr;
-     zb_zcl_identify_attrs_t identify_attr;
+    zb_zcl_basic_attrs_t basic_attr;
+    zb_zcl_identify_attrs_t identify_attr;
 };
 
 /* Zigbee device application context storage. */
 static struct zb_device_ctx dev_ctx;
 
 ZB_ZCL_DECLARE_IDENTIFY_ATTRIB_LIST(
-     identify_attr_list,
-     &dev_ctx.identify_attr.identify_time);
+    identify_attr_list,
+    &dev_ctx.identify_attr.identify_time);
 
 ZB_ZCL_DECLARE_BASIC_ATTRIB_LIST(
-     basic_attr_list,
-     &dev_ctx.basic_attr.zcl_version,
-     &dev_ctx.basic_attr.power_source);
+    basic_attr_list,
+    &dev_ctx.basic_attr.zcl_version,
+    &dev_ctx.basic_attr.power_source);
 
 ZB_DECLARE_RANGE_EXTENDER_CLUSTER_LIST(
-     nwk_coordinator_clusters,
-     basic_attr_list,
-     identify_attr_list);
+    nwk_coordinator_clusters,
+    basic_attr_list,
+    identify_attr_list);
 
 ZB_DECLARE_RANGE_EXTENDER_EP(
-     nwk_coordinator_ep,
-     ZIGBEE_COORDINATOR_ENDPOINT,
-     nwk_coordinator_clusters);
+    nwk_coordinator_ep,
+    ZIGBEE_COORDINATOR_ENDPOINT,
+    nwk_coordinator_clusters);
 
 ZBOSS_DECLARE_DEVICE_CTX_1_EP(
-     nwk_coordinator,
-     nwk_coordinator_ep);
+    nwk_coordinator,
+    nwk_coordinator_ep);
 
 
 /**@brief Function for initializing all clusters attributes. */
 static void app_clusters_attr_init(void)
 {
-     /* Basic cluster attributes data. */
-     dev_ctx.basic_attr.zcl_version = ZB_ZCL_VERSION;
-     dev_ctx.basic_attr.power_source = COORDINATOR_INIT_BASIC_POWER_SOURCE;
+    /* Basic cluster attributes data. */
+    dev_ctx.basic_attr.zcl_version = ZB_ZCL_VERSION;
+    dev_ctx.basic_attr.power_source = COORDINATOR_INIT_BASIC_POWER_SOURCE;
 
-     /* Identify cluster attributes data. */
-     dev_ctx.identify_attr.identify_time = ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE;
+    /* Identify cluster attributes data. */
+    dev_ctx.identify_attr.identify_time = ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE;
 }
 
 /**@brief Function to toggle the identify LED.
@@ -111,10 +115,10 @@ static void app_clusters_attr_init(void)
  */
 static void toggle_identify_led(zb_bufid_t bufid)
 {
-     static int blink_status;
+    static int blink_status;
 
-     dk_set_led(IDENTIFY_LED, (++blink_status) % 2);
-     ZB_SCHEDULE_APP_ALARM(toggle_identify_led, bufid, ZB_MILLISECONDS_TO_BEACON_INTERVAL(100));
+    dk_set_led(IDENTIFY_LED, (++blink_status) % 2);
+    ZB_SCHEDULE_APP_ALARM(toggle_identify_led, bufid, ZB_MILLISECONDS_TO_BEACON_INTERVAL(100));
 }
 
 /**@brief Function to handle identify notification events on the first endpoint.
@@ -123,18 +127,18 @@ static void toggle_identify_led(zb_bufid_t bufid)
  */
 static void identify_cb(zb_bufid_t bufid)
 {
-     zb_ret_t zb_err_code;
+    zb_ret_t zb_err_code;
 
-     if (bufid) {
-          /* Schedule a self-scheduling function that will toggle the LED. */
-          ZB_SCHEDULE_APP_CALLBACK(toggle_identify_led, bufid);
-     } else {
-          /* Cancel the toggling function alarm and turn off LED. */
-          zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(toggle_identify_led, ZB_ALARM_ANY_PARAM);
-          ZVUNUSED(zb_err_code);
+    if (bufid) {
+        /* Schedule a self-scheduling function that will toggle the LED. */
+        ZB_SCHEDULE_APP_CALLBACK(toggle_identify_led, bufid);
+    } else {
+        /* Cancel the toggling function alarm and turn off LED. */
+        zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(toggle_identify_led, ZB_ALARM_ANY_PARAM);
+        ZVUNUSED(zb_err_code);
 
-          dk_set_led(IDENTIFY_LED, 0);
-     }
+        dk_set_led(IDENTIFY_LED, 0);
+    }
 }
 
 /**@brief Starts identifying the device.
@@ -143,32 +147,32 @@ static void identify_cb(zb_bufid_t bufid)
  */
 static void start_identifying(zb_bufid_t bufid)
 {
-     ZVUNUSED(bufid);
+    ZVUNUSED(bufid);
 
-     if (ZB_JOINED()) {
-          /* Check if endpoint is in identifying mode,
-           * if not, put desired endpoint in identifying mode.
-           */
-          if (dev_ctx.identify_attr.identify_time ==
-              ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE) {
+    if (ZB_JOINED()) {
+        /* Check if endpoint is in identifying mode,
+         * if not, put desired endpoint in identifying mode.
+         */
+        if (dev_ctx.identify_attr.identify_time ==
+            ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE) {
 
-               zb_ret_t zb_err_code = zb_bdb_finding_binding_target(
-                    ZIGBEE_COORDINATOR_ENDPOINT);
+            zb_ret_t zb_err_code = zb_bdb_finding_binding_target(
+                ZIGBEE_COORDINATOR_ENDPOINT);
 
-               if (zb_err_code == RET_OK) {
-                    LOG_INF("Enter identify mode");
-               } else if (zb_err_code == RET_INVALID_STATE) {
-                    LOG_WRN("RET_INVALID_STATE - Cannot enter identify mode");
-               } else {
-                    ZB_ERROR_CHECK(zb_err_code);
-               }
-          } else {
-               LOG_INF("Cancel identify mode");
-               zb_bdb_finding_binding_target_cancel();
-          }
-     } else {
-          LOG_WRN("Device not in a network - cannot enter identify mode");
-     }
+            if (zb_err_code == RET_OK) {
+                LOG_INF("Enter identify mode");
+            } else if (zb_err_code == RET_INVALID_STATE) {
+                LOG_WRN("RET_INVALID_STATE - Cannot enter identify mode");
+            } else {
+                ZB_ERROR_CHECK(zb_err_code);
+            }
+        } else {
+            LOG_INF("Cancel identify mode");
+            zb_bdb_finding_binding_target_cancel();
+        }
+    } else {
+        LOG_WRN("Device not in a network - cannot enter identify mode");
+    }
 }
 
 /**@brief Callback used in order to visualise network steering period.
@@ -177,10 +181,10 @@ static void start_identifying(zb_bufid_t bufid)
  */
 static void steering_finished(zb_uint8_t param)
 {
-     ARG_UNUSED(param);
+    ARG_UNUSED(param);
 
-     LOG_INF("Network steering finished");
-     dk_set_led_off(ZIGBEE_NETWORK_STATE_LED);
+    LOG_INF("Network steering finished");
+    dk_set_led_off(ZIGBEE_NETWORK_STATE_LED);
 }
 
 /**@brief Callback for button events.
@@ -190,55 +194,55 @@ static void steering_finished(zb_uint8_t param)
  */
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
-     /* Calculate bitmask of buttons that are pressed and have changed their state. */
-     uint32_t buttons = button_state & has_changed;
-     zb_bool_t comm_status;
+    /* Calculate bitmask of buttons that are pressed and have changed their state. */
+    uint32_t buttons = button_state & has_changed;
+    zb_bool_t comm_status;
 
-     if (buttons & KEY_ZIGBEE_NETWORK_REOPEN) {
-          (void)(ZB_SCHEDULE_APP_ALARM_CANCEL(steering_finished, ZB_ALARM_ANY_PARAM));
+    if (buttons & KEY_ZIGBEE_NETWORK_REOPEN) {
+        (void)(ZB_SCHEDULE_APP_ALARM_CANCEL(steering_finished, ZB_ALARM_ANY_PARAM));
 
-          comm_status = bdb_start_top_level_commissioning(ZB_BDB_NETWORK_STEERING);
-          if (comm_status) {
-               LOG_INF("Top level commissioning restated");
-          } else {
-               LOG_INF("Top level commissioning hasn't finished yet!");
-          }
-     }
+        comm_status = bdb_start_top_level_commissioning(ZB_BDB_NETWORK_STEERING);
+        if (comm_status) {
+            LOG_INF("Top level commissioning restated");
+        } else {
+            LOG_INF("Top level commissioning hasn't finished yet!");
+        }
+    }
 
-     if (IDENTIFY_MODE_BUTTON & has_changed) {
-          if (IDENTIFY_MODE_BUTTON & button_state) {
-               /* Button changed its state to pressed */
-          } else {
-               /* Button changed its state to released */
-               if (was_factory_reset_done()) {
-                    /* The long press was for Factory Reset */
-                    LOG_DBG("After Factory Reset - ignore button release");
-               } else   {
-                    /* Button released before Factory Reset */
+    if (IDENTIFY_MODE_BUTTON & has_changed) {
+        if (IDENTIFY_MODE_BUTTON & button_state) {
+            /* Button changed its state to pressed */
+        } else {
+            /* Button changed its state to released */
+            if (was_factory_reset_done()) {
+                /* The long press was for Factory Reset */
+                LOG_DBG("After Factory Reset - ignore button release");
+            } else   {
+                /* Button released before Factory Reset */
 
-                    /* Start identification mode */
-                    ZB_SCHEDULE_APP_CALLBACK(start_identifying, 0);
-               }
-          }
-     }
+                /* Start identification mode */
+                ZB_SCHEDULE_APP_CALLBACK(start_identifying, 0);
+            }
+        }
+    }
 
-     check_factory_reset_button(button_state, has_changed);
+    check_factory_reset_button(button_state, has_changed);
 }
 
 /**@brief Function for initializing LEDs and Buttons. */
 static void configure_gpio(void)
 {
-     int err;
+    int err;
 
-     err = dk_buttons_init(button_changed);
-     if (err) {
-          LOG_ERR("Cannot init buttons (err: %d)", err);
-     }
+    err = dk_buttons_init(button_changed);
+    if (err) {
+        LOG_ERR("Cannot init buttons (err: %d)", err);
+    }
 
-     err = dk_leds_init();
-     if (err) {
-          LOG_ERR("Cannot init LEDs (err: %d)", err);
-     }
+    err = dk_leds_init();
+    if (err) {
+        LOG_ERR("Cannot init LEDs (err: %d)", err);
+    }
 }
 
 /**@brief Zigbee stack event handler.
@@ -247,121 +251,121 @@ static void configure_gpio(void)
  */
 void zboss_signal_handler(zb_bufid_t bufid)
 {
-     /* Read signal description out of memory buffer. */
-     zb_zdo_app_signal_hdr_t *sg_p = NULL;
-     zb_zdo_app_signal_type_t sig = zb_get_app_signal(bufid, &sg_p);
-     zb_ret_t status = ZB_GET_APP_SIGNAL_STATUS(bufid);
-     zb_ret_t zb_err_code;
-     zb_bool_t comm_status;
-     zb_time_t timeout_bi;
+    /* Read signal description out of memory buffer. */
+    zb_zdo_app_signal_hdr_t *sg_p = NULL;
+    zb_zdo_app_signal_type_t sig = zb_get_app_signal(bufid, &sg_p);
+    zb_ret_t status = ZB_GET_APP_SIGNAL_STATUS(bufid);
+    zb_ret_t zb_err_code;
+    zb_bool_t comm_status;
+    zb_time_t timeout_bi;
 
-     switch (sig) {
-     case ZB_BDB_SIGNAL_DEVICE_REBOOT:
-          /* BDB initialization completed after device reboot,
-           * use NVRAM contents during initialization.
-           * Device joined/rejoined and started.
-           */
-          if (status == RET_OK) {
-               if (ZIGBEE_MANUAL_STEERING == ZB_FALSE) {
-                    LOG_INF("Start network steering");
-                    comm_status = bdb_start_top_level_commissioning(
-                         ZB_BDB_NETWORK_STEERING);
-                    ZB_COMM_STATUS_CHECK(comm_status);
-               } else {
-                    LOG_INF("Coordinator restarted successfully");
-               }
-          } else {
-               LOG_ERR("Failed to initialize Zigbee stack using NVRAM data (status: %d)",
-                    status);
-          }
-          break;
+    switch (sig) {
+    case ZB_BDB_SIGNAL_DEVICE_REBOOT:
+        /* BDB initialization completed after device reboot,
+         * use NVRAM contents during initialization.
+         * Device joined/rejoined and started.
+         */
+        if (status == RET_OK) {
+            if (ZIGBEE_MANUAL_STEERING == ZB_FALSE) {
+                LOG_INF("Start network steering");
+                comm_status = bdb_start_top_level_commissioning(
+                    ZB_BDB_NETWORK_STEERING);
+                ZB_COMM_STATUS_CHECK(comm_status);
+            } else {
+                LOG_INF("Coordinator restarted successfully");
+            }
+        } else {
+            LOG_ERR("Failed to initialize Zigbee stack using NVRAM data (status: %d)",
+                status);
+        }
+        break;
 
-     case ZB_BDB_SIGNAL_STEERING:
-          if (status == RET_OK) {
-               if (ZIGBEE_PERMIT_LEGACY_DEVICES == ZB_TRUE) {
-                    LOG_INF("Allow pre-Zigbee 3.0 devices to join the network");
-                    zb_bdb_set_legacy_device_support(1);
-               }
+    case ZB_BDB_SIGNAL_STEERING:
+        if (status == RET_OK) {
+            if (ZIGBEE_PERMIT_LEGACY_DEVICES == ZB_TRUE) {
+                LOG_INF("Allow pre-Zigbee 3.0 devices to join the network");
+                zb_bdb_set_legacy_device_support(1);
+            }
 
-               /* Schedule an alarm to notify about the end of steering period.
-                */
-               LOG_INF("Network steering started");
-               zb_err_code = ZB_SCHEDULE_APP_ALARM(
-                    steering_finished, 0,
-                    ZB_TIME_ONE_SECOND *
-                    ZB_ZGP_DEFAULT_COMMISSIONING_WINDOW);
-               ZB_ERROR_CHECK(zb_err_code);
-          }
-          break;
+            /* Schedule an alarm to notify about the end of steering period.
+             */
+            LOG_INF("Network steering started");
+            zb_err_code = ZB_SCHEDULE_APP_ALARM(
+                steering_finished, 0,
+                ZB_TIME_ONE_SECOND *
+                ZB_ZGP_DEFAULT_COMMISSIONING_WINDOW);
+            ZB_ERROR_CHECK(zb_err_code);
+        }
+        break;
 
-     case ZB_ZDO_SIGNAL_DEVICE_ANNCE: {
-          zb_zdo_signal_device_annce_params_t *dev_annce_params =
-               ZB_ZDO_SIGNAL_GET_PARAMS(
-                    sg_p, zb_zdo_signal_device_annce_params_t);
+    case ZB_ZDO_SIGNAL_DEVICE_ANNCE: {
+        zb_zdo_signal_device_annce_params_t *dev_annce_params =
+            ZB_ZDO_SIGNAL_GET_PARAMS(
+                sg_p, zb_zdo_signal_device_annce_params_t);
 
-          LOG_INF("New device commissioned or rejoined (short: 0x%04hx)",
-               dev_annce_params->device_short_addr);
+        LOG_INF("New device commissioned or rejoined (short: 0x%04hx)",
+            dev_annce_params->device_short_addr);
 
-          zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(steering_finished, ZB_ALARM_ANY_PARAM);
-          if (zb_err_code == RET_OK) {
-               LOG_INF("Joining period extended.");
-               zb_err_code = ZB_SCHEDULE_APP_ALARM(
-                    steering_finished, 0,
-                    ZB_TIME_ONE_SECOND *
-                    ZB_ZGP_DEFAULT_COMMISSIONING_WINDOW);
-               ZB_ERROR_CHECK(zb_err_code);
-          }
-     } break;
+        zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(steering_finished, ZB_ALARM_ANY_PARAM);
+        if (zb_err_code == RET_OK) {
+            LOG_INF("Joining period extended.");
+            zb_err_code = ZB_SCHEDULE_APP_ALARM(
+                steering_finished, 0,
+                ZB_TIME_ONE_SECOND *
+                ZB_ZGP_DEFAULT_COMMISSIONING_WINDOW);
+            ZB_ERROR_CHECK(zb_err_code);
+        }
+    } break;
 
-     default:
-          /* Call default signal handler. */
-          ZB_ERROR_CHECK(zigbee_default_signal_handler(bufid));
-          break;
-     }
+    default:
+        /* Call default signal handler. */
+        ZB_ERROR_CHECK(zigbee_default_signal_handler(bufid));
+        break;
+    }
 
-     /* Update network status LED. */
-     if (ZB_JOINED() &&
-         (ZB_SCHEDULE_GET_ALARM_TIME(steering_finished, ZB_ALARM_ANY_PARAM,
-                         &timeout_bi) == RET_OK)) {
-          dk_set_led_on(ZIGBEE_NETWORK_STATE_LED);
-     } else {
-          dk_set_led_off(ZIGBEE_NETWORK_STATE_LED);
-     }
+    /* Update network status LED. */
+    if (ZB_JOINED() &&
+        (ZB_SCHEDULE_GET_ALARM_TIME(steering_finished, ZB_ALARM_ANY_PARAM,
+                    &timeout_bi) == RET_OK)) {
+        dk_set_led_on(ZIGBEE_NETWORK_STATE_LED);
+    } else {
+        dk_set_led_off(ZIGBEE_NETWORK_STATE_LED);
+    }
 
-     /*
-      * All callbacks should either reuse or free passed buffers.
-      * If bufid == 0, the buffer is invalid (not passed).
-      */
-     if (bufid) {
-          zb_buf_free(bufid);
-     }
+    /*
+     * All callbacks should either reuse or free passed buffers.
+     * If bufid == 0, the buffer is invalid (not passed).
+     */
+    if (bufid) {
+        zb_buf_free(bufid);
+    }
 }
 
-void main(void)
+int main(void)
 {
-     int blink_status = 0;
+    int blink_status = 0;
 
-     LOG_INF("Starting ZBOSS Coordinator example");
+    LOG_INF("Starting ZBOSS Coordinator example");
 
-     /* Initialize */
-     configure_gpio();
-     register_factory_reset_button(FACTORY_RESET_BUTTON);
+    /* Initialize */
+    configure_gpio();
+    register_factory_reset_button(FACTORY_RESET_BUTTON);
 
-     /* Register device context (endpoints). */
-     ZB_AF_REGISTER_DEVICE_CTX(&nwk_coordinator);
+    /* Register device context (endpoints). */
+    ZB_AF_REGISTER_DEVICE_CTX(&nwk_coordinator);
 
-     app_clusters_attr_init();
+    app_clusters_attr_init();
 
-     /* Register handlers to identify notifications. */
-     ZB_AF_SET_IDENTIFY_NOTIFICATION_HANDLER(ZIGBEE_COORDINATOR_ENDPOINT, identify_cb);
+    /* Register handlers to identify notifications. */
+    ZB_AF_SET_IDENTIFY_NOTIFICATION_HANDLER(ZIGBEE_COORDINATOR_ENDPOINT, identify_cb);
 
-     /* Start Zigbee default thread */
-     zigbee_enable();
+    /* Start Zigbee default thread */
+    zigbee_enable();
 
-     LOG_INF("ZBOSS Coordinator example started");
+    LOG_INF("ZBOSS Coordinator example started");
 
-     while (1) {
-          dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
-          k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
-     }
+    while (1) {
+        dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
+        k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
+    }
 }

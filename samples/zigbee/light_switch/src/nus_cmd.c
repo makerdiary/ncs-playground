@@ -26,31 +26,31 @@ static void pairing_complete(struct bt_conn *conn, bool bonded);
 static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason);
 static void __attribute__((unused))
 security_changed(struct bt_conn *conn, bt_security_t level,
-           enum bt_security_err err);
+         enum bt_security_err err);
 
 static struct bt_conn_auth_cb conn_auth_callbacks = {
-     .passkey_display = auth_passkey_display,
-     .cancel = auth_cancel,
+    .passkey_display = auth_passkey_display,
+    .cancel = auth_cancel,
 };
 
 static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
-     .pairing_complete = pairing_complete,
-     .pairing_failed = pairing_failed
+    .pairing_complete = pairing_complete,
+    .pairing_failed = pairing_failed
 };
 
 static struct bt_conn_cb conn_callbacks = {
-     .connected = connected,
-     .disconnected = disconnected,
-     COND_CODE_1(CONFIG_BT_SMP, (.security_changed = security_changed), ())
+    .connected = connected,
+    .disconnected = disconnected,
+    COND_CODE_1(CONFIG_BT_SMP, (.security_changed = security_changed), ())
 };
 
 static const struct bt_data ad[] = {
-     BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-     BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
+    BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
+    BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 };
 
 static const struct bt_data sd[] = {
-     BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_NUS_VAL),
+    BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_NUS_VAL),
 };
 
 static struct k_work on_connect_work;
@@ -60,160 +60,160 @@ static struct nus_entry *nus_commands;
 
 static void connected(struct bt_conn *conn, uint8_t err)
 {
-     if (err) {
-          LOG_ERR("Connection failed (err %u)", err);
-          return;
-     }
+    if (err) {
+        LOG_ERR("Connection failed (err %u)", err);
+        return;
+    }
 
-     LOG_INF("Connected");
-     current_conn = bt_conn_ref(conn);
+    LOG_INF("Connected");
+    current_conn = bt_conn_ref(conn);
 
-     k_work_submit(&on_connect_work);
+    k_work_submit(&on_connect_work);
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
-     LOG_INF("Disconnected (reason %u)", reason);
+    LOG_INF("Disconnected (reason %u)", reason);
 
-     if (current_conn) {
-          bt_conn_unref(current_conn);
-          current_conn = NULL;
+    if (current_conn) {
+        bt_conn_unref(current_conn);
+        current_conn = NULL;
 
-          k_work_submit(&on_disconnect_work);
-     }
+        k_work_submit(&on_disconnect_work);
+    }
 }
 
 static char *ble_addr(struct bt_conn *conn)
 {
-     static char addr[BT_ADDR_LE_STR_LEN];
+    static char addr[BT_ADDR_LE_STR_LEN];
 
-     bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+    bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-     return addr;
+    return addr;
 }
 
 static void __attribute__((unused))
 security_changed(struct bt_conn *conn, bt_security_t level,
-           enum bt_security_err err)
+         enum bt_security_err err)
 {
-     char *addr = ble_addr(conn);
+    char *addr = ble_addr(conn);
 
-     if (!err) {
-          LOG_INF("Security changed: %s level %u", addr, level);
-     } else {
-          LOG_INF("Security failed: %s level %u err %d", addr,
-               level, err);
-     }
+    if (!err) {
+        LOG_INF("Security changed: %s level %u", addr, level);
+    } else {
+        LOG_INF("Security failed: %s level %u err %d", addr,
+            level, err);
+    }
 }
 
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
-     char *addr = ble_addr(conn);
+    char *addr = ble_addr(conn);
 
-     LOG_INF("Passkey for %s: %06u", addr, passkey);
+    LOG_INF("Passkey for %s: %06u", addr, passkey);
 }
 
 static void auth_cancel(struct bt_conn *conn)
 {
-     char *addr = ble_addr(conn);
+    char *addr = ble_addr(conn);
 
-     LOG_INF("Pairing cancelled: %s", addr);
+    LOG_INF("Pairing cancelled: %s", addr);
 }
 
 static void pairing_complete(struct bt_conn *conn, bool bonded)
 {
-     char *addr = ble_addr(conn);
+    char *addr = ble_addr(conn);
 
-     LOG_INF("Pairing completed: %s, bonded: %d", addr, bonded);
+    LOG_INF("Pairing completed: %s, bonded: %d", addr, bonded);
 }
 
 static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 {
-     char *addr = ble_addr(conn);
+    char *addr = ble_addr(conn);
 
-     LOG_INF("Pairing failed conn: %s, reason %d", addr, reason);
+    LOG_INF("Pairing failed conn: %s, reason %d", addr, reason);
 }
 
 static int ble_utils_init(struct bt_nus_cb *nus_clbs,
-                 nus_connection_cb_t on_connect,
-                 nus_disconnection_cb_t on_disconnect)
+              nus_connection_cb_t on_connect,
+              nus_disconnection_cb_t on_disconnect)
 {
-     int ret;
+    int ret;
 
-     k_work_init(&on_connect_work, on_connect);
-     k_work_init(&on_disconnect_work, on_disconnect);
+    k_work_init(&on_connect_work, on_connect);
+    k_work_init(&on_disconnect_work, on_disconnect);
 
-     bt_conn_cb_register(&conn_callbacks);
+    bt_conn_cb_register(&conn_callbacks);
 
-     if (IS_ENABLED(CONFIG_BT_SMP)) {
-          ret = bt_conn_auth_cb_register(&conn_auth_callbacks);
-          if (ret) {
-               LOG_ERR("Failed to register authorization callbacks.");
-               goto end;
-          }
+    if (IS_ENABLED(CONFIG_BT_SMP)) {
+        ret = bt_conn_auth_cb_register(&conn_auth_callbacks);
+        if (ret) {
+            LOG_ERR("Failed to register authorization callbacks.");
+            goto end;
+        }
 
-          ret = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
-          if (ret) {
-               LOG_ERR("Failed to register authorization info callbacks.");
-               goto end;
-          }
-     }
+        ret = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
+        if (ret) {
+            LOG_ERR("Failed to register authorization info callbacks.");
+            goto end;
+        }
+    }
 
-     ret = bt_enable(NULL);
-     if (ret) {
-          LOG_ERR("Bluetooth initialization failed (error: %d)", ret);
-          goto end;
-     }
+    ret = bt_enable(NULL);
+    if (ret) {
+        LOG_ERR("Bluetooth initialization failed (error: %d)", ret);
+        goto end;
+    }
 
-     LOG_INF("Bluetooth initialized");
+    LOG_INF("Bluetooth initialized");
 
-     if (IS_ENABLED(CONFIG_SETTINGS)) {
-          settings_load();
-     }
+    if (IS_ENABLED(CONFIG_SETTINGS)) {
+        settings_load();
+    }
 
-     ret = bt_nus_init(nus_clbs);
-     if (ret) {
-          LOG_ERR("Failed to initialize UART service (error: %d)", ret);
-          goto end;
-     }
+    ret = bt_nus_init(nus_clbs);
+    if (ret) {
+        LOG_ERR("Failed to initialize UART service (error: %d)", ret);
+        goto end;
+    }
 
-     ret = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd,
-                     ARRAY_SIZE(sd));
-     if (ret) {
-          LOG_ERR("Advertising failed to start (error: %d)", ret);
-          goto end;
-     }
+    ret = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd,
+                  ARRAY_SIZE(sd));
+    if (ret) {
+        LOG_ERR("Advertising failed to start (error: %d)", ret);
+        goto end;
+    }
 
 end:
-     return ret;
+    return ret;
 }
 
 static void nus_command_handler(struct bt_conn *conn,
-                    const uint8_t *const data, uint16_t length)
+                const uint8_t *const data, uint16_t length)
 {
-     LOG_HEXDUMP_DBG(data, length, "NUS recv:");
+    LOG_HEXDUMP_DBG(data, length, "NUS recv:");
 
-     for (struct nus_entry *p = nus_commands; p->cmd != NULL; p++) {
-          if ((length >= strlen(p->cmd)) &&
-              (!strncmp(p->cmd, (const char *)data, strlen(p->cmd)))) {
-               LOG_DBG("Matched cmd: %s", p->cmd);
-               k_work_submit(&p->work);
-               return;
-          }
-     }
+    for (struct nus_entry *p = nus_commands; p->cmd != NULL; p++) {
+        if ((length >= strlen(p->cmd)) &&
+            (!strncmp(p->cmd, (const char *)data, strlen(p->cmd)))) {
+            LOG_DBG("Matched cmd: %s", p->cmd);
+            k_work_submit(&p->work);
+            return;
+        }
+    }
 
-     LOG_HEXDUMP_WRN(data, length, "Command unrecognized");
+    LOG_HEXDUMP_WRN(data, length, "Command unrecognized");
 }
 
 void nus_cmd_init(nus_connection_cb_t on_connect,
-            nus_disconnection_cb_t on_disconnect,
-            struct nus_entry *command_set)
+          nus_disconnection_cb_t on_disconnect,
+          struct nus_entry *command_set)
 {
-     struct bt_nus_cb nus_clbs = {
-          .received = nus_command_handler,
-          .sent = NULL,
-     };
+    struct bt_nus_cb nus_clbs = {
+        .received = nus_command_handler,
+        .sent = NULL,
+    };
 
-     nus_commands = command_set;
-     ble_utils_init(&nus_clbs, on_connect, on_disconnect);
+    nus_commands = command_set;
+    ble_utils_init(&nus_clbs, on_connect, on_disconnect);
 }
