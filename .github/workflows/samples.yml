@@ -36,7 +36,7 @@ jobs:
       - name: Build samples
         working-directory: ncs-playground
         run: |
-          west twister --integration -v --inline-logs --board-root boards -T samples
+          west twister --integration -v --inline-logs -T samples
 
       - name: Tar firmware
         working-directory: ncs-playground/twister-out
